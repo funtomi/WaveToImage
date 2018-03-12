@@ -9,6 +9,9 @@ namespace WaveLib
 	{
 		string RecordTmpFile{get;}
 		string SavedFile{get;set;}
+        /// <summary>
+        /// ¬º“Ù÷ ¡ø
+        /// </summary>
 		Quality RecordQuality{get;set;}
 		long RecordSize{get;}
 		TimeSpan RecordTimeSpan{get;}

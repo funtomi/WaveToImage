@@ -118,6 +118,9 @@ namespace WaveLib {
             }
         }
 
+        /// <summary>
+        /// ¿ªÊ¼Â¼Òô
+        /// </summary>
         public void Start() {
             if (_isRecord) return;
             Stop();

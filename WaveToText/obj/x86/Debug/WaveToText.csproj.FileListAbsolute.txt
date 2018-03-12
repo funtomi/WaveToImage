@@ -25,3 +25,15 @@ E:\自学\淘宝\语音识别图片\WaveToText\WaveToText\WaveToText\obj\x86\Deb
 E:\自学\淘宝\语音识别图片\WaveToText\WaveToText\WaveToText\obj\x86\Debug\WaveToText.Form1.resources
 E:\自学\淘宝\语音识别图片\WaveToText\WaveToText\WaveToText\obj\x86\Debug\WaveToText.Properties.Resources.resources
 E:\自学\淘宝\语音识别图片\WaveToText\WaveToText\WaveToText\obj\x86\Debug\WaveToText.csproj.GenerateResource.Cache
+E:\自学\淘宝\语音识别图片\WaveToImage\WaveToText\obj\x86\Debug\WaveToText.exe
+E:\自学\淘宝\语音识别图片\WaveToImage\WaveToText\obj\x86\Debug\WaveToText.pdb
+E:\自学\淘宝\语音识别图片\WaveToImage\WaveToText\obj\x86\Debug\WaveToText.csprojResolveAssemblyReference.cache
+E:\自学\淘宝\语音识别图片\WaveToImage\WaveToText\obj\x86\Debug\WaveToText.Form1.resources
+E:\自学\淘宝\语音识别图片\WaveToImage\WaveToText\obj\x86\Debug\WaveToText.Properties.Resources.resources
+E:\自学\淘宝\语音识别图片\WaveToImage\WaveToText\obj\x86\Debug\WaveToText.csproj.GenerateResource.Cache
+E:\自学\淘宝\语音识别图片\WaveToImage\WaveToText\bin\Debug\msc.dll
+E:\自学\淘宝\语音识别图片\WaveToImage\WaveToText\bin\Debug\speex.dll
+E:\自学\淘宝\语音识别图片\WaveToImage\WaveToText\bin\Debug\WaveToText.exe
+E:\自学\淘宝\语音识别图片\WaveToImage\WaveToText\bin\Debug\WaveToText.pdb
+E:\自学\淘宝\语音识别图片\WaveToImage\WaveToText\bin\Debug\WaveLib.dll
+E:\自学\淘宝\语音识别图片\WaveToImage\WaveToText\bin\Debug\WaveLib.pdb

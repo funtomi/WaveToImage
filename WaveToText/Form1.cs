@@ -25,17 +25,23 @@ namespace WaveToText
             wave.SavedFile = AppDomain.CurrentDomain.BaseDirectory + "aaa.wav";
             wave.RecordQuality = Quality.Height;
         }
+
+        /// <summary>
+        /// 显示错误信息
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="error"></param>
         private void wave_ErrorEvent(Exception e, string error)
         {
             MessageBox.Show(e.Message);
         }
+
         private void button1_Click(object sender, EventArgs e)
         {
             if (btnWav.Text == "录音")
             {
                 btnWav.Text = "停止";
-                wave.Start();
-
+                wave.Start(); 
             }
             else
             {
@@ -58,10 +64,6 @@ namespace WaveToText
                 btnWav.Text = "录音";
             }
         }
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
-        }
+         
     }
 }

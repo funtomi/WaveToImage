@@ -24,3 +24,8 @@ E:\自学\淘宝\语音识别图片\WaveToText\WaveToText\WaveLib\bin\Debug\Wave
 E:\自学\淘宝\语音识别图片\WaveToText\WaveToText\WaveLib\obj\Debug\WaveLib.csprojResolveAssemblyReference.cache
 E:\自学\淘宝\语音识别图片\WaveToText\WaveToText\WaveLib\obj\Debug\WaveLib.dll
 E:\自学\淘宝\语音识别图片\WaveToText\WaveToText\WaveLib\obj\Debug\WaveLib.pdb
+E:\自学\淘宝\语音识别图片\WaveToImage\WaveLib\bin\Debug\WaveLib.dll
+E:\自学\淘宝\语音识别图片\WaveToImage\WaveLib\bin\Debug\WaveLib.pdb
+E:\自学\淘宝\语音识别图片\WaveToImage\WaveLib\obj\Debug\WaveLib.csprojResolveAssemblyReference.cache
+E:\自学\淘宝\语音识别图片\WaveToImage\WaveLib\obj\Debug\WaveLib.dll
+E:\自学\淘宝\语音识别图片\WaveToImage\WaveLib\obj\Debug\WaveLib.pdb
