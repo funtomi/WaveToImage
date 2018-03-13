@@ -37,3 +37,4 @@ E:\自学\淘宝\语音识别图片\WaveToImage\WaveToText\bin\Debug\WaveToText.
 E:\自学\淘宝\语音识别图片\WaveToImage\WaveToText\bin\Debug\WaveToText.pdb
 E:\自学\淘宝\语音识别图片\WaveToImage\WaveToText\bin\Debug\WaveLib.dll
 E:\自学\淘宝\语音识别图片\WaveToImage\WaveToText\bin\Debug\WaveLib.pdb
+E:\自学\淘宝\语音识别图片\WaveToImage\WaveToText\bin\Debug\WaveToText.exe.config
