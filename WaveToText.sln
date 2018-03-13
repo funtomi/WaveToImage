@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WaveToText", "WaveToText\Wa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WaveLib", "WaveLib\WaveLib.csproj", "{6E15178C-954D-40A6-8D29-57A2252B6C9D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageSave", "ImageSave\ImageSave.csproj", "{2E02E0B0-B8CA-401E-A26F-3132A76EDE5D}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,16 +37,6 @@ Global
 		{6E15178C-954D-40A6-8D29-57A2252B6C9D}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{6E15178C-954D-40A6-8D29-57A2252B6C9D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{6E15178C-954D-40A6-8D29-57A2252B6C9D}.Release|x86.ActiveCfg = Release|Any CPU
-		{2E02E0B0-B8CA-401E-A26F-3132A76EDE5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2E02E0B0-B8CA-401E-A26F-3132A76EDE5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2E02E0B0-B8CA-401E-A26F-3132A76EDE5D}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{2E02E0B0-B8CA-401E-A26F-3132A76EDE5D}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{2E02E0B0-B8CA-401E-A26F-3132A76EDE5D}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{2E02E0B0-B8CA-401E-A26F-3132A76EDE5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2E02E0B0-B8CA-401E-A26F-3132A76EDE5D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2E02E0B0-B8CA-401E-A26F-3132A76EDE5D}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{2E02E0B0-B8CA-401E-A26F-3132A76EDE5D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{2E02E0B0-B8CA-401E-A26F-3132A76EDE5D}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

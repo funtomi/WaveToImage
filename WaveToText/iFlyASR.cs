@@ -1,12 +1,12 @@
-﻿namespace iFly
-{
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Runtime.InteropServices;
-    using System.Text;
-    using System.Threading;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading;
 
+namespace WaveToText
+{ 
     public class iFlyASR
     {
         private int BUFFER_NUM = 0x5000;

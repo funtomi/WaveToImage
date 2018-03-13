@@ -7,3 +7,6 @@ E:\自学\淘宝\语音识别图片\WaveToImage\ImageSave\obj\Debug\ImageSave.Pr
 E:\自学\淘宝\语音识别图片\WaveToImage\ImageSave\obj\Debug\ImageSave.csproj.GenerateResource.Cache
 E:\自学\淘宝\语音识别图片\WaveToImage\ImageSave\obj\Debug\ImageSave.exe
 E:\自学\淘宝\语音识别图片\WaveToImage\ImageSave\obj\Debug\ImageSave.pdb
+E:\自学\淘宝\语音识别图片\WaveToImage\ImageSave\bin\Debug\MetroFramework.Design.dll
+E:\自学\淘宝\语音识别图片\WaveToImage\ImageSave\bin\Debug\MetroFramework.dll
+E:\自学\淘宝\语音识别图片\WaveToImage\ImageSave\bin\Debug\MetroFramework.Fonts.dll
