@@ -1,4 +1,5 @@
 ﻿using MetroFramework.Forms;
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,7 +16,8 @@ using WaveLib;
 namespace WaveToText {
     public partial class MainForm : MetroForm {
         IWaveControl wave;
-        private static string CONSTR = ConfigurationManager.ConnectionStrings["conStr"].ToString();
+        //private static string CONSTR = ConfigurationManager.ConnectionStrings["conStr"].ToString();
+        private static string CONSTR = ConfigurationManager.ConnectionStrings["mySqlConStr"].ToString();
         private List<string> files = new List<string>();//图片地址集合
         public MainForm() {
             InitializeComponent();
@@ -124,12 +126,24 @@ namespace WaveToText {
                 return;
             }
             var fileName = Path.GetFileName(filePath);
-            using (SqlConnection con = new SqlConnection(CONSTR)) {
+            #region SqlServer
+            //using (SqlConnection con = new SqlConnection(CONSTR)) {
+            //    con.Open();
+            //    string sql = "insert into Image(ImageName,ImageContent) values(@imageName,@imageContent)";
+            //    SqlParameter[] parameter = { new SqlParameter("@imageName", fileName),
+            //                               new SqlParameter("@imageContent",bytes)};
+            //    SqlCommand cmd = new SqlCommand(sql, con);
+            //    cmd.Parameters.AddRange(parameter);
+            //    cmd.ExecuteNonQuery();
+            //    con.Close();
+            //}
+            #endregion
+            using (MySqlConnection con = new MySqlConnection(CONSTR)) {
                 con.Open();
                 string sql = "insert into Image(ImageName,ImageContent) values(@imageName,@imageContent)";
-                SqlParameter[] parameter = { new SqlParameter("@imageName", fileName),
-                                           new SqlParameter("@imageContent",bytes)};
-                SqlCommand cmd = new SqlCommand(sql, con);
+                MySqlParameter[] parameter = { new MySqlParameter("@imageName", fileName),
+                                           new MySqlParameter("@imageContent",bytes)};
+                MySqlCommand cmd = new MySqlCommand(sql, con);
                 cmd.Parameters.AddRange(parameter);
                 cmd.ExecuteNonQuery();
                 con.Close();

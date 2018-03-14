@@ -34,11 +34,11 @@
             this.btnWav = new MetroFramework.Controls.MetroButton();
             this.lblTip = new MetroFramework.Controls.MetroLabel();
             this.tabPg2 = new MetroFramework.Controls.MetroTabPage();
+            this.lblText1 = new MetroFramework.Controls.MetroLabel();
             this.btnSave = new MetroFramework.Controls.MetroButton();
             this.textBox1 = new MetroFramework.Controls.MetroTextBox();
             this.btnSelect = new MetroFramework.Controls.MetroButton();
             this.lblTip3 = new MetroFramework.Controls.MetroLabel();
-            this.lblText1 = new MetroFramework.Controls.MetroLabel();
             ((System.ComponentModel.ISupportInitialize)(this.metroStyleManager1)).BeginInit();
             this.tabCtrl.SuspendLayout();
             this.tabPg1.SuspendLayout();
@@ -62,6 +62,7 @@
             this.tabCtrl.ItemSize = new System.Drawing.Size(90, 35);
             this.tabCtrl.Location = new System.Drawing.Point(23, 63);
             this.tabCtrl.Name = "tabCtrl";
+            this.tabCtrl.Padding = new System.Drawing.Point(6, 8);
             this.tabCtrl.SelectedIndex = 0;
             this.tabCtrl.ShowToolTips = true;
             this.tabCtrl.Size = new System.Drawing.Size(870, 522);
@@ -77,6 +78,7 @@
             this.tabPg1.Controls.Add(this.lblTip2);
             this.tabPg1.Controls.Add(this.btnWav);
             this.tabPg1.Controls.Add(this.lblTip);
+            this.tabPg1.Enabled = true;
             this.tabPg1.HorizontalScrollbar = true;
             this.tabPg1.HorizontalScrollbarBarColor = true;
             this.tabPg1.HorizontalScrollbarHighlightOnWheel = false;
@@ -91,6 +93,7 @@
             this.tabPg1.VerticalScrollbarBarColor = true;
             this.tabPg1.VerticalScrollbarHighlightOnWheel = false;
             this.tabPg1.VerticalScrollbarSize = 10;
+            this.tabPg1.Visible = true;
             // 
             // listView1
             // 
@@ -105,6 +108,7 @@
             this.listView1.MultiSelect = false;
             this.listView1.Name = "listView1";
             this.listView1.OwnerDraw = true;
+            this.listView1.ShowGroups = false;
             this.listView1.Size = new System.Drawing.Size(832, 366);
             this.listView1.TabIndex = 6;
             this.listView1.UseCompatibleStateImageBehavior = false;
@@ -160,6 +164,7 @@
             this.tabPg2.Controls.Add(this.textBox1);
             this.tabPg2.Controls.Add(this.btnSelect);
             this.tabPg2.Controls.Add(this.lblTip3);
+            this.tabPg2.Enabled = true;
             this.tabPg2.HorizontalScrollbar = true;
             this.tabPg2.HorizontalScrollbarBarColor = true;
             this.tabPg2.HorizontalScrollbarHighlightOnWheel = false;
@@ -174,6 +179,15 @@
             this.tabPg2.VerticalScrollbarBarColor = true;
             this.tabPg2.VerticalScrollbarHighlightOnWheel = false;
             this.tabPg2.VerticalScrollbarSize = 10;
+            this.tabPg2.Visible = false;
+            // 
+            // lblText1
+            // 
+            this.lblText1.AutoSize = true;
+            this.lblText1.Location = new System.Drawing.Point(15, 101);
+            this.lblText1.Name = "lblText1";
+            this.lblText1.Size = new System.Drawing.Size(0, 0);
+            this.lblText1.TabIndex = 7;
             // 
             // btnSave
             // 
@@ -237,14 +251,6 @@
             this.lblTip3.Size = new System.Drawing.Size(275, 19);
             this.lblTip3.TabIndex = 2;
             this.lblTip3.Text = "请点击【选择】按钮选择需要导入的图片：";
-            // 
-            // lblText1
-            // 
-            this.lblText1.AutoSize = true;
-            this.lblText1.Location = new System.Drawing.Point(15, 101);
-            this.lblText1.Name = "lblText1";
-            this.lblText1.Size = new System.Drawing.Size(0, 0);
-            this.lblText1.TabIndex = 7;
             // 
             // MainForm
             // 

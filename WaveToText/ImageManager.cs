@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MySql.Data.MySqlClient;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -10,7 +11,8 @@ using System.Text;
 
 namespace WaveToText {
     class ImageManager {
-        private static string CONSTR = ConfigurationManager.ConnectionStrings["conStr"].ToString();
+        //private static string CONSTR = ConfigurationManager.ConnectionStrings["conStr"].ToString();
+        private static string CONSTR = ConfigurationManager.ConnectionStrings["mySqlConStr"].ToString();
         private string _imageText = "";
         public ImageManager(string text) {
             _imageText = text;
@@ -52,24 +54,46 @@ namespace WaveToText {
         }
 
         private DataTable ReadImages(string text) {
+            #region SqlServer
+            //try {
+            //    using (SqlConnection con = new SqlConnection(CONSTR)) {
+            //        con.Open();
+            //        DataTable dt = new DataTable();
+            //        string sql = "select ImageName,ImageContent from Image where ImageName like @imageName";
+            //        SqlParameter[] parameter = { new SqlParameter("@imageName", "%" + text + "%") };
+            //        SqlCommand cmd = new SqlCommand(sql, con);
+            //        cmd.Parameters.AddRange(parameter);
+
+            //        SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+            //        adapter.Fill(dt);
+
+            //        con.Close();
+            //        return dt; 
+            //    } 
+            //} catch (Exception ex) {
+            //    throw new ArgumentException(ex.Message);
+            //}
+            #endregion
+
             try {
-                using (SqlConnection con = new SqlConnection(CONSTR)) {
+                using (MySqlConnection con = new MySqlConnection(CONSTR)) {
                     con.Open();
                     DataTable dt = new DataTable();
                     string sql = "select ImageName,ImageContent from Image where ImageName like @imageName";
-                    SqlParameter[] parameter = { new SqlParameter("@imageName", "%" + text + "%") };
-                    SqlCommand cmd = new SqlCommand(sql, con);
+                    MySqlParameter[] parameter = { new MySqlParameter("@imageName", "%" + text + "%") };
+                    MySqlCommand cmd = new MySqlCommand(sql, con);
                     cmd.Parameters.AddRange(parameter);
 
-                    SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+                    MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
                     adapter.Fill(dt);
-                    
+
                     con.Close();
-                    return dt; 
-                } 
+                    return dt;
+                }
             } catch (Exception ex) {
                 throw new ArgumentException(ex.Message);
             }
+            
             
         } 
     }
