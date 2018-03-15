@@ -43,3 +43,14 @@ E:\自学\淘宝\语音识别图片\WaveToImage\Export\msc.dll
 E:\自学\淘宝\语音识别图片\WaveToImage\Export\speex.dll
 E:\自学\淘宝\语音识别图片\WaveToImage\Export\WaveToText.exe
 E:\自学\淘宝\语音识别图片\WaveToImage\Export\WaveToText.pdb
+E:\自学\样例\语音识别图片\WaveToImage\Export\WaveToText.exe.config
+E:\自学\样例\语音识别图片\WaveToImage\WaveToText\obj\x86\Debug\WaveToText.exe
+E:\自学\样例\语音识别图片\WaveToImage\WaveToText\obj\x86\Debug\WaveToText.pdb
+E:\自学\样例\语音识别图片\WaveToImage\Export\msc.dll
+E:\自学\样例\语音识别图片\WaveToImage\Export\speex.dll
+E:\自学\样例\语音识别图片\WaveToImage\Export\WaveToText.exe
+E:\自学\样例\语音识别图片\WaveToImage\Export\WaveToText.pdb
+E:\自学\样例\语音识别图片\WaveToImage\WaveToText\obj\x86\Debug\WaveToText.csprojResolveAssemblyReference.cache
+E:\自学\样例\语音识别图片\WaveToImage\WaveToText\obj\x86\Debug\WaveToText.MainForm.resources
+E:\自学\样例\语音识别图片\WaveToImage\WaveToText\obj\x86\Debug\WaveToText.Properties.Resources.resources
+E:\自学\样例\语音识别图片\WaveToImage\WaveToText\obj\x86\Debug\WaveToText.csproj.GenerateResource.Cache

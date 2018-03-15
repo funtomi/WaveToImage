@@ -93,7 +93,8 @@ namespace WaveToText {
                 fileDialog.RestoreDirectory = true;
                 if (fileDialog.ShowDialog() == DialogResult.OK) {
                     foreach (string fileName in fileDialog.FileNames) {
-                        this.textBox1.Text += fileName;
+                        var fileName2 = Path.GetFileNameWithoutExtension(fileName); 
+                        this.textBox1.Text += fileName2;
                         files.Add(fileName);
                     }
                 }

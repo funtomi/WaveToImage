@@ -62,7 +62,6 @@
             this.tabCtrl.ItemSize = new System.Drawing.Size(90, 35);
             this.tabCtrl.Location = new System.Drawing.Point(23, 63);
             this.tabCtrl.Name = "tabCtrl";
-            this.tabCtrl.Padding = new System.Drawing.Point(6, 8);
             this.tabCtrl.SelectedIndex = 0;
             this.tabCtrl.ShowToolTips = true;
             this.tabCtrl.Size = new System.Drawing.Size(870, 522);
