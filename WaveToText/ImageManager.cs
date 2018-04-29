@@ -13,74 +13,36 @@ namespace WaveToText {
     class ImageManager {
         //private static string CONSTR = ConfigurationManager.ConnectionStrings["conStr"].ToString();
         private static string CONSTR = ConfigurationManager.ConnectionStrings["mySqlConStr"].ToString();
-        private string _imageText = "";
-        public ImageManager(string text) {
-            _imageText = text;
+       
+        public ImageManager() { 
         }
 
-        public List<string> GetTextLists() {
-            if (string.IsNullOrEmpty(_imageText)) {
+        public List<string> GetTextLists(string text) {
+            if (string.IsNullOrEmpty(text)) {
                 return null;
             }
-            if (!_imageText.Contains('，')) {
-                return new List<string>() { _imageText};
-            } 
-            return _imageText.Split('，').ToList<string>();
+            if (!text.Contains('，')) {
+                return new List<string>() { text };
+            }
+            return text.Split('，').ToList<string>();
         }
 
-        public Dictionary<string,Image> GetImages() {
-            if (string.IsNullOrEmpty(_imageText)) {
+        /// <summary>
+        /// 通过景点ID查找图片
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public Dictionary<string, Image> GetImagesById(int id) {
+            if (id <= 0) {
                 return null;
             }
-            var texts = GetTextLists();
-            if (texts==null||texts.Count==0) {
-                return null;
-            }
-            Dictionary<string, Image> images = new Dictionary<string, Image>();
-            foreach (var item in texts) {
-                var dt = ReadImages(item);
-                if (dt == null || dt.Rows.Count == 0) {
-                    continue;
-                }
-                for (int i = 0; i < dt.Rows.Count; i++) {
-                    var imagebyte = dt.Rows[i]["ImageContent"] as byte[];
-                    var imageName = Path.GetFileNameWithoutExtension(dt.Rows[i]["ImageName"].ToString());
-                    MemoryStream ms = new System.IO.MemoryStream(imagebyte);
-                    images.Add(imageName, System.Drawing.Image.FromStream(ms));
-                }
-            }
-           
-            return images;
-        }
-
-        private DataTable ReadImages(string text) {
-            #region SqlServer
-            //try {
-            //    using (SqlConnection con = new SqlConnection(CONSTR)) {
-            //        con.Open();
-            //        DataTable dt = new DataTable();
-            //        string sql = "select ImageName,ImageContent from Image where ImageName like @imageName";
-            //        SqlParameter[] parameter = { new SqlParameter("@imageName", "%" + text + "%") };
-            //        SqlCommand cmd = new SqlCommand(sql, con);
-            //        cmd.Parameters.AddRange(parameter);
-
-            //        SqlDataAdapter adapter = new SqlDataAdapter(cmd);
-            //        adapter.Fill(dt);
-
-            //        con.Close();
-            //        return dt; 
-            //    } 
-            //} catch (Exception ex) {
-            //    throw new ArgumentException(ex.Message);
-            //}
-            #endregion
+            DataTable dt = new DataTable();
 
             try {
                 using (MySqlConnection con = new MySqlConnection(CONSTR)) {
                     con.Open();
-                    DataTable dt = new DataTable();
-                    string sql = "select ImageName,ImageContent from Image where ImageName like @imageName";
-                    MySqlParameter[] parameter = { new MySqlParameter("@imageName", "%" + text + "%") };
+                    string sql = "select ImageName,ImageContent from Image where AttractionId= @AttractionId";
+                    MySqlParameter[] parameter = { new MySqlParameter("@AttractionId", id) };
                     MySqlCommand cmd = new MySqlCommand(sql, con);
                     cmd.Parameters.AddRange(parameter);
 
@@ -88,13 +50,23 @@ namespace WaveToText {
                     adapter.Fill(dt);
 
                     con.Close();
-                    return dt;
                 }
             } catch (Exception ex) {
                 throw new ArgumentException(ex.Message);
             }
-            
-            
-        } 
+            Dictionary<string, Image> images = new Dictionary<string, Image>();
+            if (dt == null || dt.Rows.Count == 0) {
+                return null;
+            }
+            for (int i = 0; i < dt.Rows.Count; i++) {
+                var imagebyte = dt.Rows[i]["ImageContent"] as byte[];
+                var imageName = Path.GetFileNameWithoutExtension(dt.Rows[i]["ImageName"].ToString());
+                MemoryStream ms = new System.IO.MemoryStream(imagebyte);
+                images.Add(imageName, System.Drawing.Image.FromStream(ms));
+            }
+
+            return images;
+        }
+         
     }
 }

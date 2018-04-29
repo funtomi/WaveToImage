@@ -1,29 +1,30 @@
-﻿using GMap.NET;
-using GMap.NET.MapProviders;
-using MetroFramework.Forms;
+﻿using MetroFramework.Forms;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Configuration;
 using System.Data;
-using System.Data.SqlClient;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using WaveLib;
+using WaveToText.Helper;
+using WaveToText.Models;
+using System.Linq;
 
 namespace WaveToText {
     public partial class MainForm : MetroForm {
         IWaveControl wave;
         //private static string CONSTR = ConfigurationManager.ConnectionStrings["conStr"].ToString();
         private static string CONSTR = ConfigurationManager.ConnectionStrings["mySqlConStr"].ToString();
-        private List<string> _files = new List<string>();//图片地址集合
         private DataRow _currentProvince;//当前省份；
         private DataRow _currentCity;//当前市
         private DataRow _currentAttr;//当前景点
+        private List<CityModel> _citys;//城市列表
+        private List<ProvinceModel> _provinces;//省份列表
+        private List<AttractionModel> _attractions;//景点列表
+        private bool _isSelect = false;
+
         public MainForm() {
             InitializeComponent();
             this.StyleManager = this.metroStyleManager1;
@@ -32,11 +33,11 @@ namespace WaveToText {
             wave.SavedFile = AppDomain.CurrentDomain.BaseDirectory + "aaa.wav";
             wave.RecordQuality = Quality.Height;
             InitMap();
-            this.tabCtrl.TabPages.Remove(this.tbPgAddAttr);
         }
 
         #region 公共
         private void MainForm_Load(object sender, EventArgs e) {
+            GetDatas();
             InitTreeView();
         }
 
@@ -46,21 +47,25 @@ namespace WaveToText {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void treeView1_AfterSelect(object sender, TreeViewEventArgs e) {
-            var node = this.treeView1.SelectedNode;
-            DataRow row = node.Tag as DataRow;
-            if (row["AttractionId"] != null) {
-                var attra = Convert.ToInt32(row["AttractionId"]);
-                SetAttraction(attra, row);
+            if (!_isSelect) {
+                _isSelect = true;
                 return;
             }
-            if (row["cityId"] != null) {
-                var city = Convert.ToInt32(row["cityId"]);
-                SetCity(city, row);
-                var parentNode = node.Parent.Tag as DataRow;
-                if (parentNode ==null) {
-                    return;
-                }
-                SetProvince( parentNode);
+            var node = this.treeView1.SelectedNode;
+            var tag = node.Tag;
+            ProvinceModel pro = tag as ProvinceModel;
+            if (pro != null) {
+                this.webBrowser1.Document.InvokeScript("SetCity", new object[] { pro.Name });
+                return;
+            }
+            CityModel city = tag as CityModel;
+            if (city != null) {
+                this.webBrowser1.Document.InvokeScript("SetCity", new object[] { city.Name });
+                return;
+            }
+            AttractionModel attra = tag as AttractionModel;
+            if (attra != null) {
+                SetAttraction(attra);
                 return;
             }
         }
@@ -72,58 +77,84 @@ namespace WaveToText {
         /// 初始化景点列表
         /// </summary>
         private void InitTreeView() {
-            var attrDt = GetAttractions();
-            var cityDt = GetCity();
-            var proDt = GetProvince();
-            foreach (DataRow pro in proDt.Rows) {
+            if (_provinces == null || _provinces.Count == 0) {
+                this.treeView1.Nodes.Clear();
+                return;
+            }
+            foreach (var pro in _provinces) {
                 if (pro == null) {
                     continue;
                 }
-                var node = new TreeNode(pro["name"].ToString());
-                node.Tag = pro;
-                foreach (DataRow cityRow in cityDt.Rows) {
-                    if (cityRow == null) {
+                TreeNode proNode = new TreeNode(pro.Name);
+                proNode.Name = pro.Name;
+                proNode.Tag = pro;
+                List<CityModel> citys = _citys.FindAll(p => p.ProvinceId == pro.ProvinceId);
+                foreach (var city in citys) {
+                    if (citys == null) {
                         continue;
                     }
-                    var cityNode = new TreeNode(cityRow["name"].ToString());
-                    cityNode.Tag = cityRow;
-                    foreach (DataRow item in attrDt.Rows) {
-                        if (item == null) {
+                    TreeNode cityNode = new TreeNode(city.Name);
+                    cityNode.Name = city.Name;
+                    cityNode.Tag = city;
+                    List<AttractionModel> attras = _attractions.FindAll(p => p.CityId == city.CityId);
+                    foreach (var attra in attras) {
+                        if (attras == null) {
                             continue;
                         }
-                        var attrNode = new TreeNode(item["AttractionName"].ToString());
-                        attrNode.Tag = item;
-                        cityNode.Nodes.Add(attrNode);
+                        TreeNode attraNode = new TreeNode(attra.AttractionName);
+                        attraNode.Name = attra.AttractionName;
+                        attraNode.Tag = attra;
+                        cityNode.Nodes.Add(attraNode);
                     }
-                    node.Nodes.Add(cityNode);
+                    proNode.Nodes.Add(cityNode);
                 }
-                this.treeView1.Nodes.Add(node);
+                this.treeView1.Nodes.Add(proNode);
             }
         }
 
+        /// <summary>
+        /// 获取城市。省份和景点列表
+        /// </summary>
+        private void GetDatas() {
+            _attractions = GetAttractions();
+            _citys = GetCity();
+            _provinces = GetProvince();
+        }
 
         /// <summary>
         /// 获取省份信息
         /// </summary>
         /// <returns></returns>
-        private DataTable GetProvince() {
-            return GetWholeData("Province");
+        private List<ProvinceModel> GetProvince() {
+            var dt = GetWholeData("Province");
+            if (dt == null || dt.Rows.Count == 0) {
+                return null;
+            }
+            return DataTableHelper.ToList<ProvinceModel>(dt);
         }
 
         /// <summary>
         /// 获取城市信息
         /// </summary>
         /// <returns></returns>
-        private DataTable GetCity() {
-            return GetWholeData("City");
+        private List<CityModel> GetCity() {
+            var dt = GetWholeData("City");
+            if (dt == null || dt.Rows.Count == 0) {
+                return null;
+            }
+            return DataTableHelper.ToList<CityModel>(dt);
         }
 
         /// <summary>
         /// 获取景点信息
         /// </summary>
         /// <returns></returns>
-        private DataTable GetAttractions() {
-            return GetWholeData("Attraction");
+        private List<AttractionModel> GetAttractions() {
+            var dt = GetWholeData("Attraction");
+            if (dt == null || dt.Rows.Count == 0) {
+                return null;
+            }
+            return DataTableHelper.ToList<AttractionModel>(dt);
         }
 
         /// <summary>
@@ -169,7 +200,7 @@ namespace WaveToText {
                     var text = asr.Audio2Txt(AppDomain.CurrentDomain.BaseDirectory + "aaa.wav");
                     text = text.TrimEnd('。');
                     lblMsg.Text = text;
-                    ShowImages(text);
+                    ShowResult(text);
                 } catch (Exception) {
 
                     lblMsg.Text = "无法识别";
@@ -179,11 +210,80 @@ namespace WaveToText {
                 btnWav.Text = "录音";
             }
         }
+        public List<string> GetTextLists(string text) {
+            if (string.IsNullOrEmpty(text)) {
+                return null;
+            }
+            if (text.Contains("，")) {
+                return text.Split('，').ToList<string>();
+            }
+            if (text.Contains(",")) {
+                return text.Split(',').ToList<string>();
+            }
+            return new List<string>() { text };
+        }
+
+        private void ShowResult(string text) {
+            ImageManager imageManager = new ImageManager();
+            var list = GetTextLists(text);
+            AttractionModel attra = GetSimilarAttraction(list);
+            SetAttraction(attra);
+            if (attra ==null) {
+                return;
+            }
+            var nodes = this.treeView1.Nodes.Find(attra.AttractionName, true);
+            if (nodes == null || nodes.Length == 0) {
+                return;
+            }
+            var node = nodes[0];
+            _isSelect = false;
+            this.treeView1.SelectedNode = node; 
+        }
+
+        /// <summary>
+        /// 模糊查找景点信息
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        private AttractionModel GetSimilarAttraction(List<string> list) {
+            if (list == null || list.Count == 0) {
+                return null;
+            }
+            try {
+                using (MySqlConnection conn = new MySqlConnection(CONSTR)) {
+                    conn.Open();
+                    foreach (var text in list) {
+
+                        var sql = "select * from Attraction WHERE "
+                                 + "AttractionName LIKE @Text"
+                                 + " or AttractionDescription LIKE @Text";
+                        MySqlCommand cmd = new MySqlCommand(sql, conn);
+                        cmd.Parameters.AddWithValue("@Text","%"+text+"%");
+                        MySqlDataAdapter ada = new MySqlDataAdapter(cmd);
+                        DataTable dt = new DataTable();
+                        ada.Fill(dt);
+                        if (dt == null || dt.Rows.Count == 0) {
+                            continue;
+                        }
+                        var result = DataTableHelper.ToList<AttractionModel>(dt);
+                        if (result == null || result.Count == 0) {
+                            continue;
+                        }
+                        conn.Close();
+                        return result[0];
+                    }
+                    conn.Close();
+                    return null;
+                }
+
+            } catch (Exception ex) {
+                MessageBox.Show(ex.Message);
+                return null;
+            }
+        }
 
         //展示图片
-        private void ShowImages(string text) {
-            ImageManager imageManager = new ImageManager(text);
-            var images = imageManager.GetImages();
+        private void ShowImages(Dictionary<string, Image> images) {
             imageList1.Images.Clear();
             listView1.Items.Clear();
             if (images == null || images.Count == 0) {
@@ -199,45 +299,13 @@ namespace WaveToText {
             }
         }
 
-        //保存到数据
-        private void SaveFileToDB(byte[] bytes, string filePath,int id) {
-            if (bytes == null || bytes.Length == 0) {
-                return;
-            }
-            var fileName = Path.GetFileName(filePath);
-            #region SqlServer
-            //using (SqlConnection con = new SqlConnection(CONSTR)) {
-            //    con.Open();
-            //    string sql = "insert into Image(ImageName,ImageContent) values(@imageName,@imageContent)";
-            //    SqlParameter[] parameter = { new SqlParameter("@imageName", fileName),
-            //                               new SqlParameter("@imageContent",bytes)};
-            //    SqlCommand cmd = new SqlCommand(sql, con);
-            //    cmd.Parameters.AddRange(parameter);
-            //    cmd.ExecuteNonQuery();
-            //    con.Close();
-            //}
-            #endregion
-            using (MySqlConnection con = new MySqlConnection(CONSTR)) {
-                con.Open();
-                string sql = "insert into Image(ImageName,ImageContent,AttractionId) values(@imageName,@imageContent,@AttractionId)";
-                MySqlParameter[] parameter = { new MySqlParameter("@imageName", fileName),
-                                           new MySqlParameter("@imageContent",bytes),
-                                             new MySqlParameter("@AttractionId",id)};
-                MySqlCommand cmd = new MySqlCommand(sql, con);
-                cmd.Parameters.AddRange(parameter);
-                cmd.ExecuteNonQuery();
-                con.Close();
-            }
-        }
+        #region map
 
-        #region Gmap
-         
         /// <summary>
         /// 初始化地图
         /// </summary>
         private void InitMap() {
-            this.bMap1.EnableScrollWheelZoom();
-             
+            this.webBrowser1.Url = new Uri(Path.Combine(Application.StartupPath, "HttpMap/BMap.html"));
         }
 
         /// <summary>
@@ -245,243 +313,41 @@ namespace WaveToText {
         /// </summary>
         /// <param name="attra"></param>
         /// <param name="row"></param>
-        private void SetAttraction(int attra, DataRow row) {
-            SetCurrentAttraction(attra, row);
-            //this.gMapControl1.Position = new PointLatLng(Convert.ToDouble(row["PositionX"]), Convert.ToDouble(row["PositionY"]));
-            //this.gMapControl1.Update();
+        private void SetAttraction(AttractionModel attra) {
+            if (attra == null) {
+                this.txtboxAttractionInfo.Text = "";
+                this.listView1.Items.Clear();
+                return;
+            }
+            this.webBrowser1.Document.InvokeScript("LocalSearch", new object[] { attra.AttractionName });
+            this.txtboxAttractionInfo.Text = string.Format("{0}/r{1}", attra.AttractionName, attra.AttractionDescription);
+            SetImages(attra);
+        }
+
+        /// <summary>
+        /// 设置图片
+        /// </summary>
+        /// <param name="attra"></param>
+        private void SetImages(AttractionModel attra) {
+            if (attra == null) {
+                this.listView1.Items.Clear();
+                return;
+            }
+            ImageManager imageManager = new ImageManager();
+            var images = imageManager.GetImagesById(attra.AttractionId);
+            ShowImages(images);
         }
 
         #endregion
 
         #region 添加景点
-        /// <summary>
-        /// 检查输入
-        /// </summary>
-        /// <returns></returns>
-        private bool CheckInput() {
-            if (_files == null || _files.Count == 0) {
-                MessageBox.Show("请选择景点图片！");
-                return false;
-            }
-            if (string.IsNullOrEmpty(this.lblProvince.Text) || string.IsNullOrEmpty(this.lblCity.Text)) {
-                MessageBox.Show("请选择景点地址！");
-                return false;
-            }
-            if (string.IsNullOrEmpty(this.txtBoxAttractionName.Text) || string.IsNullOrEmpty(this.txtBoxAttractionDescription.Text)) {
-                MessageBox.Show("请输入景点信息！");
-                return false;
-            }
-            if (string.IsNullOrEmpty(this.lblX.Text) || string.IsNullOrEmpty(this.lblY.Text)) {
-                MessageBox.Show("请选择景点坐标！");
-                return false;
-            }
-            return true;
-        }
-
-        /// <summary>
-        /// 保存景点信息
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void btnSave_Click(object sender, EventArgs e) {
-            if (!CheckInput()) {
-                return;
-            }
-
-            this.lblText1.Text = "正在保存中，请稍后...";
-            string errFile = "";
-            try {
-                int attractionId = AddAttraction();
-                if (attractionId == 0) {
-                    this.lblText1.Text = "保存失败！";
-                    return;
-                }
-                foreach (string filePath in _files) {
-                    errFile = filePath;
-                    FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-                    byte[] bytes = new byte[fs.Length];
-                    fs.Read(bytes, 0, (int)fs.Length);
-                    SaveFileToDB(bytes, filePath, attractionId);
-                }
-                this.lblText1.Text = "保存成功！";
-            } catch (Exception ex) {
-                this.lblText1.Text = string.Format("{0}图片保存失败！错误信息：{1}", errFile, ex.Message);
-            }
-        }
-         
-        /// <summary>
-        /// 选择景点图片
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void btnSelect_Click(object sender, EventArgs e) {
-            this.textBox1.Text = "";
-            _files.Clear();
-            using (OpenFileDialog fileDialog = new OpenFileDialog()) {
-                fileDialog.DefaultExt = " ";
-                fileDialog.FileName = "openFileDialog1";
-                fileDialog.Filter = "图片|*.png;*.jpeg;*.jpg";
-                fileDialog.InitialDirectory = "c:\\";
-                fileDialog.Multiselect = true;
-                fileDialog.RestoreDirectory = true;
-                if (fileDialog.ShowDialog() == DialogResult.OK) {
-                    foreach (string fileName in fileDialog.FileNames) {
-                        var fileName2 = Path.GetFileNameWithoutExtension(fileName);
-                        this.textBox1.Text += fileName2;
-                        _files.Add(fileName);
-                    }
+        private void btnAdd_Click(object sender, EventArgs e) {
+            using (AddAttrForm form = new AddAttrForm(_provinces, _citys)) {
+                form.ShowDialog();
+                if (form.DialogResult == System.Windows.Forms.DialogResult.OK) {
+                    InitTreeView();
                 }
             }
-        }
-
-        /// <summary>
-        /// 双击鼠标时获取地图坐标，添加景点
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void gMapControl1_DoubleClick(object sender, EventArgs e) {
-            //var position = this.gMapControl1.Position;
-            //this.lblX.Text = position.Lat.ToString();
-            //this.lblY.Text = position.Lng.ToString();
-            this.tabCtrl.TabPages.Add(this.tbPgAddAttr);
-            this.tbPgAddAttr.Select();
-        }
-
-        /// <summary>
-        /// 改变页签的话，隐藏添加景点页签，只有在地图上双击鼠标时才能添加景点
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void tabCtrl_SelectedIndexChanged(object sender, EventArgs e) {
-            if (this.tabCtrl.SelectedTab == this.tbPgAddAttr) {
-                return;
-            }
-            this.tbPgAddAttr.Hide();
-        }
-
-        /// <summary>
-        /// 设置当前省份
-        /// </summary>
-        /// <param name="province"></param>
-        /// <param name="row"></param>
-        private void SetProvince( DataRow row) {
-            if (row == null) {
-                _currentProvince = null;
-                this.lblProvince.Text = "";
-                return;
-            }
-            var province = Convert.ToInt32(row["provinceId"]);
-
-            _currentProvince = row;
-            this.lblProvince.Text = row["name"].ToString();
-        }
-
-        /// <summary>
-        /// 设置当前市
-        /// </summary>
-        /// <param name="city"></param>
-        /// <param name="row"></param>
-        private void SetCity(int city, DataRow row) {
-            if (row == null) {
-                _currentCity = null;
-                this.lblCity.Text = "";
-                return;
-            }
-            _currentCity = row;
-            this.lblCity.Text = row["name"].ToString();
-        }
-
-        /// <summary>
-        /// 设置当前景点
-        /// </summary>
-        /// <param name="attra"></param>
-        /// <param name="row"></param>
-        private void SetCurrentAttraction(int attra, DataRow row) {
-            if (row == null) {
-                _currentAttr = null;
-                return;
-            }
-            _currentAttr = row;
-        }
-
-
-        /// <summary>
-        /// 新增一条景点信息并返回id
-        /// </summary>
-        /// <returns></returns>
-        private int AddAttraction() {
-            var attrName = this.txtBoxAttractionName.Text;
-            var attrDes = this.txtBoxAttractionDescription.Text;
-            var x = Convert.ToDouble(this.lblX.Text);
-            var y = Convert.ToDouble(this.lblY.Text);
-            var cityId = Convert.ToInt32(_currentCity["cityId"]);
-            var suc = AddAttraction(attrName, attrDes, x, y);
-            if (!suc) {
-                return 0;
-            }
-            var id = GetAttrId();
-            return id;
-        }
-
-        /// <summary>
-        /// 获取刚新增的景点的Id
-        /// </summary>
-        /// <returns></returns>
-        private int GetAttrId() {
-            try {
-                using (MySqlConnection conn = new MySqlConnection(CONSTR)) {
-                    conn.Open();
-                    var sql = "SELECT LAST_INSERT_ID()";
-                    var cmd = new MySqlCommand(sql, conn);
-                    var id = cmd.ExecuteScalar();
-                    conn.Close();
-                    if (id == null) {
-                        return 0;
-                    }
-                    var newId = Convert.ToInt32(id);
-                    return newId;
-                }
-            } catch (Exception ex) {
-                MessageBox.Show(ex.Message);
-                return 0;
-            }
-        }
-
-        /// <summary>
-        /// 新增一条景点信息
-        /// </summary>
-        /// <param name="attrName"></param>
-        /// <param name="attrDes"></param>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <returns></returns>
-        private bool AddAttraction(string attrName, string attrDes, double x, double y) {
-            if (string.IsNullOrEmpty(attrName) || string.IsNullOrEmpty(attrDes) || _currentCity == null || _currentCity["cityId"] == null) {
-                return false;
-            }
-            try {
-                using (MySqlConnection conn = new MySqlConnection(CONSTR)) {
-                    conn.Open();
-                    var sql = "insert into attraction (AttractionName,AttractionDescription,PositionX,PositionY,CityId)"
-                              + "VALUES(@AttractionName,@AttractionDescription,@PositionX,@PositionY,@CityId)";
-                    var cmd = new MySqlCommand(sql, conn);
-                    cmd.Parameters.AddWithValue("@AttractionName", attrName);
-                    cmd.Parameters.AddWithValue("@AttractionDescription", attrDes);
-                    cmd.Parameters.AddWithValue("@PositionX", x);
-                    cmd.Parameters.AddWithValue("@PositionY", y);
-                    cmd.Parameters.AddWithValue("@CityId", Convert.ToInt32(_currentCity["cityId"]));
-                    var i = cmd.ExecuteNonQuery();
-                    conn.Close();
-                    if (i <= 0) {
-                        return false;
-                    }
-                    return true;
-                }
-            } catch (Exception ex) {
-                MessageBox.Show(ex.Message);
-                return false;
-            }
-
         }
         #endregion
 

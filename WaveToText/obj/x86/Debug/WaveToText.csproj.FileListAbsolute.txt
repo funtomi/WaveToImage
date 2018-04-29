@@ -54,3 +54,4 @@ E:\自学\样例\语音识别图片\WaveToImage\WaveToText\obj\x86\Debug\WaveToT
 E:\自学\样例\语音识别图片\WaveToImage\WaveToText\obj\x86\Debug\WaveToText.MainForm.resources
 E:\自学\样例\语音识别图片\WaveToImage\WaveToText\obj\x86\Debug\WaveToText.Properties.Resources.resources
 E:\自学\样例\语音识别图片\WaveToImage\WaveToText\obj\x86\Debug\WaveToText.csproj.GenerateResource.Cache
+E:\自学\样例\语音识别图片\WaveToImage\WaveToText\obj\x86\Debug\WaveToText.AddAttrForm.resources
