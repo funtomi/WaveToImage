@@ -225,19 +225,59 @@ namespace WaveToText {
 
         private void ShowResult(string text) {
             ImageManager imageManager = new ImageManager();
+            string name = "";
             var list = GetTextLists(text);
-            AttractionModel attra = GetSimilarAttraction(list);
-            SetAttraction(attra);
-            if (attra ==null) {
+            var pros = GetSimilarProvice(list);
+            if (pros != null) {
+                SetProvince(pros);
+                name = pros.Name;
+            } else {
+                var city = GetSimilarCity(list);
+                if (city != null) {
+                    SetCity(city);
+                    name = city.Name;
+                } else {
+                    AttractionModel attra = GetSimilarAttraction(list);
+                    SetAttraction(attra);
+                    name = attra.AttractionName;
+                }
+            }
+            if (string.IsNullOrEmpty(name)) {
                 return;
             }
-            var nodes = this.treeView1.Nodes.Find(attra.AttractionName, true);
+            var nodes = this.treeView1.Nodes.Find(name, true);
             if (nodes == null || nodes.Length == 0) {
                 return;
             }
             var node = nodes[0];
             _isSelect = false;
             this.treeView1.SelectedNode = node; 
+        }
+
+        private void SetCity(CityModel city) {
+            if (city == null) {
+                this.txtboxAttractionInfo.Text = "";
+                this.listView1.Items.Clear();
+                return;
+            }
+            this.webBrowser1.Document.InvokeScript("SetCity", new object[] { city.Name });
+            this.txtboxAttractionInfo.Text = "";
+            SetImages(null);
+        }
+
+        /// <summary>
+        /// 设置省份
+        /// </summary>
+        /// <param name="pros"></param>
+        private void SetProvince(ProvinceModel pros) {
+            if (pros == null) {
+                this.txtboxAttractionInfo.Text = "";
+                this.listView1.Items.Clear();
+                return;
+            }
+            this.webBrowser1.Document.InvokeScript("SetCity", new object[] { pros.Name });
+            this.txtboxAttractionInfo.Text = "";
+            SetImages(null);
         }
 
         /// <summary>
@@ -258,7 +298,7 @@ namespace WaveToText {
                                  + "AttractionName LIKE @Text"
                                  + " or AttractionDescription LIKE @Text";
                         MySqlCommand cmd = new MySqlCommand(sql, conn);
-                        cmd.Parameters.AddWithValue("@Text","%"+text+"%");
+                        cmd.Parameters.AddWithValue("@Text", "%" + text + "%");
                         MySqlDataAdapter ada = new MySqlDataAdapter(cmd);
                         DataTable dt = new DataTable();
                         ada.Fill(dt);
@@ -282,6 +322,87 @@ namespace WaveToText {
             }
         }
 
+        /// <summary>
+        /// 模糊查找省份
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        private ProvinceModel GetSimilarProvice(List<string> list) {
+            if (list == null || list.Count == 0) {
+                return null;
+            }
+            try {
+                using (MySqlConnection conn = new MySqlConnection(CONSTR)) {
+                    conn.Open();
+                    foreach (var text in list) {
+
+                        var sql = "select * from Province WHERE "
+                                 + "Name LIKE @Text";
+                        MySqlCommand cmd = new MySqlCommand(sql, conn);
+                        cmd.Parameters.AddWithValue("@Text", "%" + text + "%");
+                        MySqlDataAdapter ada = new MySqlDataAdapter(cmd);
+                        DataTable dt = new DataTable();
+                        ada.Fill(dt);
+                        if (dt == null || dt.Rows.Count == 0) {
+                            continue;
+                        }
+                        var result = DataTableHelper.ToList<ProvinceModel>(dt);
+                        if (result == null || result.Count == 0) {
+                            continue;
+                        }
+                        conn.Close();
+                        return result[0];
+                    }
+                    conn.Close();
+                    return null;
+                }
+
+            } catch (Exception ex) {
+                MessageBox.Show(ex.Message);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// 模糊查找城市
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        private CityModel GetSimilarCity(List<string> list) {
+            if (list == null || list.Count == 0) {
+                return null;
+            }
+            try {
+                using (MySqlConnection conn = new MySqlConnection(CONSTR)) {
+                    conn.Open();
+                    foreach (var text in list) {
+
+                        var sql = "select * from City WHERE "
+                                 + "Name LIKE @Text";
+                        MySqlCommand cmd = new MySqlCommand(sql, conn);
+                        cmd.Parameters.AddWithValue("@Text", "%" + text + "%");
+                        MySqlDataAdapter ada = new MySqlDataAdapter(cmd);
+                        DataTable dt = new DataTable();
+                        ada.Fill(dt);
+                        if (dt == null || dt.Rows.Count == 0) {
+                            continue;
+                        }
+                        var result = DataTableHelper.ToList<CityModel>(dt);
+                        if (result == null || result.Count == 0) {
+                            continue;
+                        }
+                        conn.Close();
+                        return result[0];
+                    }
+                    conn.Close();
+                    return null;
+                }
+
+            } catch (Exception ex) {
+                MessageBox.Show(ex.Message);
+                return null;
+            }
+        }
         //展示图片
         private void ShowImages(Dictionary<string, Image> images) {
             imageList1.Images.Clear();

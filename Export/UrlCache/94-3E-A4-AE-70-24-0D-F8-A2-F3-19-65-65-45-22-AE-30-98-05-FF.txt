@@ -1,1 +1,0 @@
-﻿microsoftMapsNetworkCallback({"sessionId" : "AqsS2ILlE6oZgXyHGnM4uUZe9RudAx0hQCAEir8qXchBgFvoDodboN9L6t42QReK", "authenticationResultCode" : "ValidCredentials"})
